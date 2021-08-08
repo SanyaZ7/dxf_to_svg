@@ -1,0 +1,173 @@
+# depslib dependency file v1.0
+1628288430 source:/media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/main.cpp
+	"main.h"
+	<stdlib.h>
+	<sys/stat.h>
+	<sys/types.h>
+	<fcntl.h>
+	<stdio.h>
+	<typeinfo>
+	<iostream>
+	<unistd.h>
+	"svg_gen.h"
+	<string>
+	<dxflib/dl_attributes.h>
+	<dxflib/dl_codes.h>
+	<dxflib/dl_creationadapter.h>
+	<dxflib/dl_creationinterface.h>
+	<dxflib/dl_entities.h>
+	<dxflib/dl_exception.h>
+	<dxflib/dl_extrusion.h>
+	<dxflib/dl_global.h>
+	<dxflib/dl_writer.h>
+	<dxflib/dl_writer_ascii.h>
+	"dir_explore/catalog_array.h"
+	"stats.hpp"
+	<time.h>
+	"dir_explore/str_array.h"
+
+1620053657 /media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/main.h
+
+1628242533 source:/media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dxf_filter.cpp
+	"dxf_filter.h"
+	<iostream>
+
+1627225780 /media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dxf_filter.h
+	"data_vectrors.h"
+	"stats.hpp"
+
+1628292486 source:/media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/svg_gen.cpp
+	"svg_gen.h"
+	<fstream>
+	<cmath>
+	<stdio.h>
+
+1628287416 /media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/svg_gen.h
+	"dxf_filter.h"
+	<dl_dxf.h>
+	<string>
+
+1627933504 source:/media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/data_vectors.cpp
+	"dxf_filter.h"
+
+1627934243 /media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/data_vectrors.h
+	<string>
+	<dl_creationadapter.h>
+
+1627936475 source:/media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dir_explore/catalog_array.c
+	"str_array.h"
+	"catalog_array.h"
+	<stdio.h>
+	<string.h>
+	<unistd.h>
+	<dirent.h>
+	<stdlib.h>
+	<ctype.h>
+
+1622413616 /media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dir_explore/str_array.h
+
+1625959848 /media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dir_explore/catalog_array.h
+	"str_array.h"
+	<pthread.h>
+	"../svg_gen.h"
+	"../stats.hpp"
+
+1622413682 source:/media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dir_explore/str_array.c
+	<stdio.h>
+	<stdlib.h>
+	"str_array.h"
+	<string.h>
+	<cstring>
+
+1622590059 source:/media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/stats.cpp
+	"stats.hpp"
+	<stdio.h>
+
+1622588593 /media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/stats.hpp
+	"dir_explore/str_array.h"
+
+1623355653 source:/media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/chars.cpp
+	<iostream>
+	<string.h>
+
+1495095452 source:/media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dxflib-3.17.0-src/src/dl_dxf.cpp
+	"dl_dxf.h"
+	<algorithm>
+	<string>
+	<cstdio>
+	<cassert>
+	<cmath>
+	"dl_attributes.h"
+	"dl_codes.h"
+	"dl_creationadapter.h"
+	"dl_writer_ascii.h"
+	"iostream"
+
+1495095452 /media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dxflib-3.17.0-src/src/dl_dxf.h
+	"dl_global.h"
+	<limits>
+	<stdio.h>
+	<stdlib.h>
+	<string>
+	<sstream>
+	<map>
+	"dl_attributes.h"
+	"dl_codes.h"
+	"dl_entities.h"
+	"dl_writer_ascii.h"
+
+1495095452 /media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dxflib-3.17.0-src/src/dl_global.h
+
+1495095452 /media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dxflib-3.17.0-src/src/dl_attributes.h
+	"dl_global.h"
+	<string>
+	<vector>
+	"dl_codes.h"
+
+1495095452 /media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dxflib-3.17.0-src/src/dl_codes.h
+	"dl_global.h"
+
+1495095452 /media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dxflib-3.17.0-src/src/dl_entities.h
+	"dl_global.h"
+	<string>
+	<vector>
+
+1495095452 /media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dxflib-3.17.0-src/src/dl_writer_ascii.h
+	"dl_global.h"
+	"dl_writer.h"
+	<fstream>
+	<string>
+
+1495095452 /media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dxflib-3.17.0-src/src/dl_writer.h
+	"dl_global.h"
+	<strings.h>
+	<iostream>
+	<algorithm>
+	"dl_attributes.h"
+	"dl_codes.h"
+
+1495095452 /media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dxflib-3.17.0-src/src/dl_creationadapter.h
+	"dl_global.h"
+	"dl_creationinterface.h"
+
+1495095452 /media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dxflib-3.17.0-src/src/dl_creationinterface.h
+	"dl_global.h"
+	<string.h>
+	"dl_attributes.h"
+	"dl_codes.h"
+	"dl_entities.h"
+	"dl_extrusion.h"
+
+1495095452 /media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dxflib-3.17.0-src/src/dl_extrusion.h
+	"dl_global.h"
+	<math.h>
+
+1495095452 source:/media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dxflib-3.17.0-src/src/dl_writer_ascii.cpp
+	<stdio.h>
+	<string.h>
+	"dl_writer_ascii.h"
+	"dl_exception.h"
+
+1626001655 /media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dxflib-3.17.0-src/src/dl_exception.h
+	"dl_global.h"
+

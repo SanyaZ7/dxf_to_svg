@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="dxflib_test" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/dxflib_test" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-std=c++17" />
+					<Add option="-g" />
+					<Add directory="dxflib-3.17.0-src/src" />
+				</Compiler>
+				<Linker>
+					<Add option="-lpthread" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/dxflib_test" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-std=c++17" />
+					<Add directory="dxflib-3.17.0-src/src" />
+				</Compiler>
+				<Linker>
+					<Add option="-O3" />
+					<Add option="-s" />
+					<Add option="-lpthread" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-std=c++17" />
+			<Add directory="dxflib-3.17.0-src/src" />
+		</Compiler>
+		<Linker>
+			<Add option="-lpthread" />
+		</Linker>
+		<Unit filename="data_vectors.cpp" />
+		<Unit filename="data_vectrors.h" />
+		<Unit filename="dir_explore/catalog_array.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="dir_explore/catalog_array.h" />
+		<Unit filename="dir_explore/str_array.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="dir_explore/str_array.h" />
+		<Unit filename="dxf_filter.cpp" />
+		<Unit filename="dxf_filter.h" />
+		<Unit filename="dxflib-3.17.0-src/src/dl_attributes.h" />
+		<Unit filename="dxflib-3.17.0-src/src/dl_codes.h" />
+		<Unit filename="dxflib-3.17.0-src/src/dl_creationadapter.h" />
+		<Unit filename="dxflib-3.17.0-src/src/dl_creationinterface.h" />
+		<Unit filename="dxflib-3.17.0-src/src/dl_dxf.cpp" />
+		<Unit filename="dxflib-3.17.0-src/src/dl_dxf.h" />
+		<Unit filename="dxflib-3.17.0-src/src/dl_entities.h" />
+		<Unit filename="dxflib-3.17.0-src/src/dl_exception.h" />
+		<Unit filename="dxflib-3.17.0-src/src/dl_extrusion.h" />
+		<Unit filename="dxflib-3.17.0-src/src/dl_global.h" />
+		<Unit filename="dxflib-3.17.0-src/src/dl_writer.h" />
+		<Unit filename="dxflib-3.17.0-src/src/dl_writer_ascii.cpp" />
+		<Unit filename="dxflib-3.17.0-src/src/dl_writer_ascii.h" />
+		<Unit filename="main.cpp" />
+		<Unit filename="main.h" />
+		<Unit filename="stats.cpp" />
+		<Unit filename="stats.hpp" />
+		<Unit filename="svg_gen.cpp" />
+		<Unit filename="svg_gen.h" />
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>
