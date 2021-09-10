@@ -1,57 +1,34 @@
 #include "dxf_filter.h"
 #include <iostream>
+
 /**
      * Called for every code / value tuple of the DXF file. The complete DXF file
      * contents can be handled by the implemetation of this function.
      */
-void dxf_filter::processCodeValuePair(unsigned int groupCode, const std::string& groupValue)
-{
-    func_bit_flags.processCodeValuePair=1;
-    //static int p=0;
-    //static string result=
-   /* ofstream value_pair;
-    value_pair.open("value_pair.txt");
-    value_pair<<this->resulting_svg;
-    value_pair.close();*/
-
-    /*if(p<880)
-
-    printf("processCodeValuePair|code=%d|value=%s\n", groupCode, groupValue.c_str());
-    p++;*/
-}
-
+void dxf_filter::processCodeValuePair(unsigned int groupCode, const std::string& groupValue) {func_bit_flags.processCodeValuePair=1;}
 ///Called when a section (entity, table entry, etc.) is finished.
-void dxf_filter::endSection()
-{   func_bit_flags.endSection=1;
-
-/*printf("endSection\n");*/
-
-}
-
-/**
-     * Called for every layer.
-     */
+void dxf_filter::endSection() { func_bit_flags.endSection=1;}
+///Called for every layer.
 void dxf_filter::addLayer(const DL_LayerData& data)
 {
     func_bit_flags.addLayer=1;
-    DL_LayerData_vector.emplace_back(data);
+    if(is_block==nullptr) {common.DL_LayerData_vector.emplace_back(data);}
+    else {data_vectors *last=&(DL_Block.back()); last->DL_LayerData_vector.emplace_back(data);}
 }
-
- /**
-     * Called for every linetype.
-     */
+///Called for every linetype
 void dxf_filter::addLinetype(const DL_LinetypeData& data)
 {
     func_bit_flags.addLinetype=1;
-    DL_LinetypeData_vector.emplace_back(data);
+    if(is_block){data_vectors *last=&(DL_Block.back()); last->DL_LinetypeData_vector.emplace_back(data);}
+    else {common.DL_LinetypeData_vector.emplace_back(data);}
     //printf("LinetypeData=%s\n", data.description.c_str());
     //printf("Linetypedata=%d\n", data.numberOfDashes);
     //printf("Pattern=%f\n", data.patternLength);
+    //printf("name=%s\n", data.name.c_str());
+    //printf("name=%s\n", data.description.c_str());
 }
 
-/**
-      * Called for every dash in linetype pattern
-      */
+///Called for every dash in linetype pattern
 void dxf_filter::addLinetypeDash(double length)
 {   func_bit_flags.addLinetypeDash=1;
     ///назначение не изучено
@@ -69,162 +46,146 @@ void dxf_filter::addBlock(const DL_BlockData& data)
 {
     func_bit_flags.addBlock=1;
     DL_BlockData_vector.emplace_back(data);
-    is_block=true;
+    is_block=(char*)data.name.c_str();
+    data_vectors data_;
+    DL_Block.emplace_back(data_);
 }
-
 /** Called to end the current block */
-void dxf_filter::endBlock()
-{
-    func_bit_flags.endBlock=1;
-    is_block=false;
-}
-
+void dxf_filter::endBlock() { func_bit_flags.endBlock=1; is_block=nullptr;}
 /** Called for every text style */
 void dxf_filter::addTextStyle(const DL_StyleData& data)
 {
     func_bit_flags.addTextStyle=1;
-    //printf("addTextStyle=%s\n", data.name.c_str());
-    DL_StyleData_vector.emplace_back(data);
+    if(is_block) ///если данные входят в блок
+    {data_vectors *last=&DL_Block.back(); last->DL_StyleData_vector.emplace_back(data);}
+    else{common.DL_StyleData_vector.emplace_back(data);}
 }
 
 /** Called for every point */
-void dxf_filter::addPoint(const DL_PointData& data)
-{
-    func_bit_flags.addPoint=1;
-   // printf("addPoint\n");
-}
+void dxf_filter::addPoint(const DL_PointData& data) {func_bit_flags.addPoint=1;}
 
 void dxf_filter::addLine(const DL_LineData& data)
 {
     func_bit_flags.addLine=1;
-    if(is_block==false)
-    DL_LineData_vector.emplace_back(data);
+    if(is_block)
+    {data_vectors *last=&DL_Block.back(); last->DL_LineData_vector.emplace_back(data);}
+    else {common.DL_LineData_vector.emplace_back(data);}
 }
-
 /** Called for every xline */
-void dxf_filter::addXLine(const DL_XLineData& data)
-{
-    func_bit_flags.addXLine=1;
-   // printf("addXLine\n");
-}
-
+void dxf_filter::addXLine(const DL_XLineData& data){func_bit_flags.addXLine=1;}
 /** Called for every ray */
-void dxf_filter::addRay(const DL_RayData& data)
-{
-    func_bit_flags.addRay=1;
-    //printf("addRay\n");
-}
-
+void dxf_filter::addRay(const DL_RayData& data) {func_bit_flags.addRay=1;}
+/** Called for every Arc */
 void dxf_filter::addArc(const DL_ArcData& arcdata)
 {
     func_bit_flags.addArc=1;
-    if(is_block==false)
-    {
-        DL_ArcData_vector.emplace_back(arcdata);
-    }
+    if(is_block){data_vectors *last=&DL_Block.back();last->DL_ArcData_vector.emplace_back(arcdata);}
+    else {common.DL_ArcData_vector.emplace_back(arcdata);}
 }
 
 void dxf_filter::addCircle(const DL_CircleData& circle)
 {
     func_bit_flags.addCircle=1;
-    if(is_block==false)
-    DL_CircleData_vector.emplace_back(circle);
-       // printf("CIRCLE:cx=%f|cy=%f|R=%f\n", circle.cx, circle.cy, circle.radius);
+    if(is_block){data_vectors *last=&DL_Block.back();last->DL_CircleData_vector.emplace_back(circle);}
+    else {common.DL_CircleData_vector.emplace_back(circle);}
 }
 
 void dxf_filter::addEllipse(const DL_EllipseData& ellipse)
 {
     func_bit_flags.addEllipse=1;
-    if(is_block==false)
-    DL_EllipseData_vector.emplace_back(ellipse);
+    if(is_block){data_vectors *last=&DL_Block.back();last->DL_EllipseData_vector.emplace_back(ellipse);}
+    else{common.DL_EllipseData_vector.emplace_back(ellipse);}
 }
 
 /** Called for every polyline start */
 void dxf_filter::addPolyline(const DL_PolylineData& polyline)
 {
     func_bit_flags.addPolyline=1;
-    if(is_block==false)
+    if(is_block)
     {
-        number_of_vertex_in_polyline=polyline.number;
-        auto size=polyline_matrix.size();
-        polyline_matrix.resize(size+1);
-        (polyline_matrix[size]).resize(number_of_vertex_in_polyline);
+        data_vectors *last=&DL_Block.back();
+        last->DL_PolylineData_vector.emplace_back(polyline);
+        vector<point> pt_vec;
+        last->polyline_points.emplace_back(pt_vec);
+    }
+    else
+    {
+        common.DL_PolylineData_vector.emplace_back(polyline);
+        vector<point> pt_vec;
+        common.polyline_points.emplace_back(pt_vec);
     }
 }
 
 void dxf_filter::addVertex(const DL_VertexData& vertex)
 {
-    if(is_block==false&&number_of_vertex_in_polyline!=0)
-    {
-        if(vertex.bulge>0.01) printf("bulge\n");
-        int i=polyline_matrix.size()-1;
-        int j=number_of_vertex_in_polyline-1;
-        number_of_vertex_in_polyline--;
-        point pt;
-        pt.x=vertex.x;
-        pt.y=vertex.y;
-        polyline_matrix[i][j]=pt;
-    }
     func_bit_flags.addVertex=1;
+    if(is_block)
+    {
+        data_vectors *last=&DL_Block.back();
+        point pt={vertex.x,vertex.y};
+        last->polyline_points.back().emplace_back(pt);
+    }
+    else
+    {
+        point pt={vertex.x,vertex.y};
+        common.polyline_points.back().emplace_back(pt);
+    }
 }
 
-/** Called for every spline */
+/// Called for every spline
 void dxf_filter::addSpline(const DL_SplineData& spline)
 {
     func_bit_flags.addSpline=1;
-    if(is_block==false)
+    if(is_block)
     {
-        number_of_vertex_in_spline=spline.nControl;
-        auto size=spline_points.size();
-        spline_points.resize(size+1);
-        (spline_points[size]).resize(number_of_vertex_in_spline);
-
-        number_of_knots_in_spline=spline.nKnots;
-        spline_knots.resize(size+1);
-        (spline_knots[size]).resize(number_of_knots_in_spline);
-        splines.emplace_back(spline);
+        data_vectors *last=&DL_Block.back();
+        last->DL_SplineData_vector.emplace_back(spline);
+        vector<point> pt_vec;
+        last->spline_points.emplace_back(pt_vec);
+        vector<double> k;
+        last->spline_knots.emplace_back(k);
     }
-    printf("spline=%d\n", spline.degree);
-
+    else
+    {
+        common.DL_SplineData_vector.emplace_back(spline);
+        vector<point> pt_vec;
+        common.spline_points.emplace_back(pt_vec);
+        vector<double> k;
+        common.spline_knots.emplace_back(k);
+    }
 }
 
-/** Called for every spline control point */
+/// Called for every spline control point
 void dxf_filter::addControlPoint(const DL_ControlPointData& control_point)
 {
     func_bit_flags.addControlPoint=1;
-    if(is_block==false&&number_of_vertex_in_spline!=0)
+    if(is_block)
     {
-        int i=spline_points.size()-1;
-        int j=number_of_vertex_in_spline-1;
-        number_of_vertex_in_spline--;
-        point pt;
-        pt.x=control_point.x;
-        pt.y=control_point.y;
-        spline_points[i][j]=pt;
+        data_vectors *last=&DL_Block.back();
+        point pt={control_point.x, control_point.y};
+        last->spline_points.back().emplace_back(pt);
     }
-   // printf("CONTROL_POINT: x=%f|y=%f|weight=%f\n", control_point.x, control_point.y, control_point.w);
+    else
+    {
+        point pt={control_point.x, control_point.y};
+        common.spline_points.back().emplace_back(pt);
+    }
 }
 
-/** Called for every spline fit point */
-void dxf_filter::addFitPoint(const DL_FitPointData& fitpoint)
-{
-    func_bit_flags.addFitPoint=1;
-    //printf("FIT_POINT: x=%f|y=%f|weight=%f\n", fitpoint.x, fitpoint.y);
-}
-
- /** Called for every spline knot value */
+/// Called for every spline fit point
+void dxf_filter::addFitPoint(const DL_FitPointData& fitpoint) {func_bit_flags.addFitPoint=1;}
+ /// Called for every spline knot value
 void dxf_filter::addKnot(const DL_KnotData& knot)
 {
     func_bit_flags.addKnot=1;
-    if(is_block==false&&number_of_knots_in_spline!=0)
+    if(is_block)
     {
-        int i=spline_knots.size()-1;
-        int j=number_of_knots_in_spline-1;
-        number_of_knots_in_spline--;
-        //double value=knot.k;
-        spline_knots[i][j]=knot.k;
-        //spline_knots[i].emplace_back(knot.k);
-       // printf("knot=%f_i=%d_j=%d\n", spline_knots[i][j],i,j);
+        data_vectors *last=&DL_Block.back();
+        last->spline_knots.back().emplace_back(knot.k);
+    }
+    else
+    {
+        common.spline_knots.back().emplace_back(knot.k);
     }
 }
 
@@ -233,7 +194,6 @@ void dxf_filter::addInsert(const DL_InsertData& data)
 {
     func_bit_flags.addInsert=1;
 
-    //printf("addInsert\n");
 }
 
 /** Called for every trace start */
@@ -253,7 +213,7 @@ void dxf_filter::addSolid(const DL_SolidData& data)
 void dxf_filter::addMText(const DL_MTextData& data)
 {
     func_bit_flags.addMText=1;
-    //printf("addMText\n");
+    printf("addMText=%s\n", data.text.c_str());
 }
 
 /**
@@ -275,7 +235,20 @@ void dxf_filter::addArcAlignedText(const DL_ArcAlignedTextData& data){func_bit_f
 /// Called for every block Attribute entity.
 void dxf_filter::addAttribute(const DL_AttributeData& data){func_bit_flags.addAttribute=1;}
 ///Called for every aligned dimension entity.
-void dxf_filter::addDimAlign(const DL_DimensionData& data, const DL_DimAlignedData& edata){func_bit_flags.addDimAlign=1;}
+void dxf_filter::addDimAlign(const DL_DimensionData& data, const DL_DimAlignedData& edata)
+{
+    printf("dimension_data_angle=%f\n", data.angle);
+    printf("data.dpx=%f\n",data.dpx);
+    printf("data.dpy=%f\n",data.dpy);
+    printf("data.mpx=%f\n",data.mpx);
+    printf("data.mpy=%f\n",data.mpy);
+    printf("exp1=%f\n",edata.epx1);
+    printf("exp2=%f\n",edata.epx2);
+    printf("expy1=%f\n",edata.epy1);
+    printf("expy2=%f\n",edata.epx2);
+    cout<<"text="<<data.text<<endl;
+    func_bit_flags.addDimAlign=1;
+}
 ///Called for every linear or rotated dimension entity.
 void dxf_filter::addDimLinear(const DL_DimensionData& data, const DL_DimLinearData& edata){func_bit_flags.addDimLinear=1;}
 ///Called for every radial dimension entity.
@@ -452,7 +425,7 @@ void dxf_filter::endEntity()
 void dxf_filter::addComment(const std::string& comment)
 {
     func_bit_flags.addComment=1;
-    //printf("addComment\n");
+    //printf("addComment"); cout<<comment<<endl;
 }
 
 /**
