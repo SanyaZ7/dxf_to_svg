@@ -4,11 +4,20 @@
 #include "data_vectrors.h"
 #include "stats.hpp"
 
-class dxf_filter : public DL_CreationAdapter, public data_vectors
+class dxf_filter : public DL_CreationAdapter//, public data_vectors
 {
     public:
+    ~dxf_filter()
+    {
+        DL_BlockData_vector.clear();
+    }
     dxf_filter *dxf_filter=this;
     dxf_handler_funcions func_bit_flags={0};
+    vector<DL_BlockData> DL_BlockData_vector;
+    vector<data_vectors> DL_Block; ///данные в блоках
+    data_vectors common;
+    char *is_block=nullptr; ///название блока, если не равно нулю
+    //int number_of_vertex_in_polyline=0; ///
 
     void processCodeValuePair(unsigned int groupCode, const std::string& groupValue);
     void endSection();
