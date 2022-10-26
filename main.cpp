@@ -90,6 +90,7 @@
 //#include <ctype.h>
 #include "stats.hpp"
 #include <time.h>
+#include <boost/asio.hpp>
 
 #include "dir_explore/str_array.h"
 int main(int argc, char** argv)
@@ -99,13 +100,15 @@ int main(int argc, char** argv)
     catalog_contents files;   //("/media/alex/7272b60a-d362-4f44-9b82-5de148a183e0/home/alex/Раскладки/", ".dxf");
     files.set_directory("/media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/Раскладки/");
     files.set_filter("dxf");
-    //files.filename="/media/alex/7272b60a-d362-4f44-9b82-5de148a183e0/home/alex/Раскладки/Мангал_v2 T12/ножка 4шт.DXF";
+    //files.filename="/media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/Раскладки/Мангал_v2 T12/ножка 4шт.DXF";
     //files.filename="/media/alex/7272b60a-d362-4f44-9b82-5de148a183e0/home/alex/Раскладки/Nakrasi/nakrasnew_s1.2_AntikBeloeZoloto_v2.dxf";
     //files.filename="/media/alex/7272b60a-d362-4f44-9b82-5de148a183e0/home/alex/Раскладки/2021_doors/1,02/ДГ-3_P4(2120x960)ЛЕВАЯ/1.5/KV.DXF";
       //files.filename="/media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dxf_examples/Untitled.dxf";
      //files.filename="/media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/Раскладки/2021_doors/13,03/ДА-14_P7(TP)(965x2050)ПРАВАЯ норд/1.5/KZ2_2052_3TERMO.dxf";
-     files.filename="/media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dxf_examples/n_spline.dxf";
+     //files.filename="/media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/workspace/dxflib_test/dxf_examples/polyline.dxf";
     //files.filename="/media/alex/7272b60a-d362-4f44-9b82-5de148a183e0/home/alex/Раскладки/2021_doors/25.01/Логотип на стенд 4шт.dxf";
+
+    //files.filename="/media/alex/015d3c8f-8a5e-46de-b792-c278081e088a/Раскладки/2021_doors/1,04/part2/ДА-16_P7(TP)(2160x1000)ЛЕВАЯ новый_окно s-001/1.5/UGOLOK.DXF";
     files.extracting_directory_and_files();
     files.processing_files(explore_file_body);
     files.print_stat();

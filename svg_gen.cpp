@@ -3,6 +3,7 @@
 #include <fstream>
 #include <cmath>
 #include <stdio.h>
+#include "dxf_manipulate.h"
 using namespace std;
 
 char standard_header[]=
@@ -61,20 +62,20 @@ string svg_gen::solve_quadratic_beizer(vector<point> pt)
 /*std::string s = "example string";
   std::replace( s.begin(), s.end(), 'x', 'y'); // replace all 'x' to 'y'*/
 
-void svg_gen::generate_polyline(double x_min, double y_max)
+void svg_gen::generate_polyline(data_vectors vec,double x_min, double y_max)
 {
     /*
 	<polyline stroke="red" stroke-width="3px" fill="black"
   points=" 50,80 140,80 80,100 180,100 160,85 160,115 180,100" />*/
   vector<point> pair;
-    int i=polyline_matrix.size()-1;
+    int i=vec.polyline_points.size()-1;
     for(;i>=0;--i)
     {
-        int j=polyline_matrix[i].size()-1;
+        int j=vec.polyline_points[i].size()-1;
         string res="<polyline points=\"";
         for(;j>=0; --j)
         {
-            point pt=polyline_matrix[i][j];
+            point pt=vec.polyline_points[i][j];
             char buf[32]={0};
             snprintf(buf,31,"%.3f,%.3f ", pt.x-x_min, y_max-pt.y);
             //pair.emplace_back(pt);
@@ -85,12 +86,12 @@ void svg_gen::generate_polyline(double x_min, double y_max)
     }
 }
 
-void svg_gen::generate_lines(double x_min, double y_max)
+void svg_gen::generate_lines(data_vectors vec, double x_min, double y_max)
 {
-    int size=(int) this->DL_LineData_vector.size();
+    int size=(int) vec.DL_LineData_vector.size();
     for(int i = 0; i < size; i++)
     {
-        DL_LineData *data=&(this->DL_LineData_vector[i]);
+        DL_LineData *data=&(vec.DL_LineData_vector[i]);
         string x1 = to_string(data->x1-x_min);
         string x2 = to_string(data->x2-x_min);
         string y1 = to_string(y_max-data->y1);
@@ -105,12 +106,12 @@ void svg_gen::generate_lines(double x_min, double y_max)
     }
 }
 
-void svg_gen::generate_arcs(double x_min, double y_max)
+void svg_gen::generate_arcs(data_vectors vec, double x_min, double y_max)
 {
-    int size=(int) this->DL_ArcData_vector.size();
+    int size=(int) vec.DL_ArcData_vector.size();
     for(int i = 0; i < size; i++)
     {
-        DL_ArcData *data=&(this->DL_ArcData_vector[i]);
+        DL_ArcData *data=&(vec.DL_ArcData_vector[i]);
         double sigma1=data->angle1*0.0175;
         double sigma2=data->angle2*0.0175;
         double R=data->radius;
@@ -128,12 +129,12 @@ void svg_gen::generate_arcs(double x_min, double y_max)
     }
 }
 
-void svg_gen::generate_circles(double x_min, double y_max)
+void svg_gen::generate_circles(data_vectors vec, double x_min, double y_max)
 {
-    int size=(int) this->DL_CircleData_vector.size();
+    int size=(int) vec.DL_CircleData_vector.size();
     for(int i = 0; i < size; i++)
     {
-        DL_CircleData *data=&(this->DL_CircleData_vector[i]);
+        DL_CircleData *data=&(vec.DL_CircleData_vector[i]);
         char str[64]={0};
         if(snprintf(str, 64, "<circle cx=\"%.3f\" cy=\"%.3f\" r=\"%.3f\"/>\n", data->cx-x_min, y_max-data->cy, data->radius)>63)
         {
@@ -143,12 +144,12 @@ void svg_gen::generate_circles(double x_min, double y_max)
     }
 }
 
-void svg_gen::generate_ellipse(double x_min, double y_max)
+void svg_gen::generate_ellipse(data_vectors vec, double x_min, double y_max)
 {
-    int size=(int) this->DL_EllipseData_vector.size();
+    int size=(int) vec.DL_EllipseData_vector.size();
     for(int i = 0; i < size; i++)
     {
-        DL_EllipseData *data=&(this->DL_EllipseData_vector[i]);
+        DL_EllipseData *data=&(vec.DL_EllipseData_vector[i]);
         double c=sqrt(pow(data->mx,2)+pow(data->my,2));
         double k=data->ratio;
         double a=sqrt(pow(c,2)/(1-pow(k,2)));
@@ -160,9 +161,10 @@ void svg_gen::generate_ellipse(double x_min, double y_max)
         double mx=data->mx;
         double my=data->my;
         double angle=atan(my/mx);
+        printf("k=%f, angle1=%f, angle2=%f, angle=%f,cx=%f, cy=%f, mx=%f, my=%f\n", k, angle1*180/M_PI, angle2*180/M_PI, angle*180/M_PI, cx, cy, mx, my);
         double min=angle1<angle2 ? angle1 : angle2;
         double max=angle1>angle2 ? angle1 : angle2;
-        if(min<0.001&&max>6.28&&data->my<0.001)
+        if(min<0.01&&max>6.27&&data->my<0.001)
         {
             char str[64]= {0};
            // double angle = atan(data->mx/data->my);
@@ -185,7 +187,12 @@ void svg_gen::generate_ellipse(double x_min, double y_max)
                 if(angle>0.001)
                 {
                     if(max<6.28&&min>0.001)
-                    alpha_array[i]=i*((2.0*M_PI-max+min)/((double)count_vertex))-angle;
+                    {
+                        if(angle1<angle2)
+                        alpha_array[i]=i*((max-min)/((double)count_vertex))+min;
+                        else
+                        alpha_array[i]=i*((2*M_PI-(max-min))/((double)count_vertex))-(max-min)-angle;
+                    }
                     else alpha_array[i]=i*((2.0*M_PI)/((double)count_vertex))-angle;
                     double xr=a*cos(alpha_array[i]);
                     double yr=b*sin(alpha_array[i]);
@@ -291,26 +298,23 @@ void svg_gen::spline_points_and_knots_degree2(vector<point> pt, vector<double> k
 #define MAX(x,y) (x>y?x:y)
 #define MIN(x,y) (x<y?x:y)
 
-void svg_gen::generate_spline(double x_min, double y_max)
+void svg_gen::generate_spline(data_vectors vec, double x_min, double y_max)
 {
-    int size=(int) spline_knots.size();
+    int size=(int) vec.spline_knots.size();
     for(int i=0; i<size; ++i)
     {
-        //int size=(int) spline_knots[i].size();
-        reverse(spline_knots[i].begin(), spline_knots[i].end());
-        reverse(spline_points[i].begin(), spline_points[i].end());
-        if(splines[i].degree==2)
-            spline_points_and_knots_degree2(spline_points[i], spline_knots[i], x_min, y_max);
+        if(vec.DL_SplineData_vector[i].degree==2)
+            spline_points_and_knots_degree2(vec.spline_points[i], vec.spline_knots[i], x_min, y_max);
             else
             {
-                int i=spline_points.size()-1;
+                int i=vec.spline_points.size()-1;
                 for(; i>=0; --i)
                 {
-                    int j=spline_points[i].size()-1;
+                    int j=vec.spline_points[i].size()-1;
                     string res="<polyline points=\"";
                     for(; j>=0; --j)
                     {
-                        point pt=spline_points[i][j];
+                        point pt=vec.spline_points[i][j];
                         char buf[32]= {0};
                         snprintf(buf,31,"%.3f,%.3f ", pt.x-x_min, y_max-pt.y);
                         res.append(buf);
@@ -322,18 +326,18 @@ void svg_gen::generate_spline(double x_min, double y_max)
     }
 }
 
-line svg_gen::dxf_min_max_values(double &x_min, double &x_max, double &y_min, double &y_max)
+range svg_gen::min_max_values(data_vectors vec, double &x_min, double &x_max, double &y_min, double &y_max)
 {
     x_max=-10000, x_min=10000, y_max=-10000, y_min=10000;
     ///тут нужно определить габариты
     ///обход полилиний
-    int i=polyline_matrix.size()-1;
+    int i=vec.polyline_points.size()-1;
     for(; i>=0; --i)
     {
-        int j=polyline_matrix[i].size()-1;
+        int j=vec.polyline_points[i].size()-1;
         for(; j>=0; --j)
         {
-            point pt=polyline_matrix[i][j];
+            point pt=vec.polyline_points[i][j];
             if(pt.x<x_min) x_min=pt.x;
             if(pt.x>x_max) x_max=pt.x;
             if(pt.y<y_min) y_min=pt.y;
@@ -341,10 +345,10 @@ line svg_gen::dxf_min_max_values(double &x_min, double &x_max, double &y_min, do
         }
     }
     ///обход линий
-    int size=(int) this->DL_LineData_vector.size();
+    int size=(int) vec.DL_LineData_vector.size();
     for(int i = 0; i < size; i++)
     {
-        DL_LineData &data=this->DL_LineData_vector[i];
+        DL_LineData &data=vec.DL_LineData_vector[i];
         if(data.x1<x_min) x_min=data.x1;
         if(data.x2<x_min) x_min=data.x2;
         if(data.x1>x_max) x_max=data.x1;
@@ -356,12 +360,10 @@ line svg_gen::dxf_min_max_values(double &x_min, double &x_max, double &y_min, do
         if(data.y2>y_max) y_max=data.y2;
     }
     ///обход дуг
-    size=(int) this->DL_ArcData_vector.size();
-    printf("size=%d\n", size);
+    size=(int) vec.DL_ArcData_vector.size();
     for(int i = 0; i < size; i++)
     {
-        DL_ArcData *data=&(this->DL_ArcData_vector[i]);
-        printf("angle1=%f, angle2=%f\n", data->angle1, data->angle2);
+        DL_ArcData *data=&(vec.DL_ArcData_vector[i]);
         double delta_x_max=0,delta_x_min=0,delta_y_max=0,delta_y_min=0;
 
         double R=data->radius;
@@ -403,7 +405,6 @@ line svg_gen::dxf_min_max_values(double &x_min, double &x_max, double &y_min, do
         if(delta_x_min==0){delta_x_min=MIN(R*cos(sigma1),R*cos(sigma2));}
         if(delta_y_max==0){delta_y_max=MAX(R*sin(sigma1),R*sin(sigma2));}
         if(delta_y_min==0){delta_y_min=MIN(R*sin(sigma1),R*sin(sigma2));}
-        printf("x_min=%f,x_max=%f,y_min=%f,y_max=%f,R=%f\n",delta_x_min,delta_x_max,delta_y_min,delta_y_max,R);
 
         if(data->cx+delta_x_min<x_min) x_min=data->cx+delta_x_min;
         if(data->cx+delta_x_max>x_max) x_max=data->cx+delta_x_max;
@@ -412,10 +413,10 @@ line svg_gen::dxf_min_max_values(double &x_min, double &x_max, double &y_min, do
         if(data->cy+delta_y_max>y_max) y_max=data->cy+delta_y_max;
     }
     ///обход окружностей
-    size=(int) this->DL_CircleData_vector.size();
+    size=(int) vec.DL_CircleData_vector.size();
     for(int i = 0; i < size; i++)
     {
-        DL_CircleData *data=&(this->DL_CircleData_vector[i]);
+        DL_CircleData *data=&(vec.DL_CircleData_vector[i]);
         double r=data->radius;
         if(data->cx-r<x_min) x_min=data->cx-r;
         if(data->cx+r>x_max) x_max=data->cx+r;
@@ -424,10 +425,10 @@ line svg_gen::dxf_min_max_values(double &x_min, double &x_max, double &y_min, do
         if(data->cy+r>y_max) y_max=data->cy+r;
     }
     ///обход эллипсов
-    size=(int) this->DL_EllipseData_vector.size();
+    size=(int) vec.DL_EllipseData_vector.size();
     for(int i = 0; i < size; i++)
     {
-        DL_EllipseData *data=&(this->DL_EllipseData_vector[i]);
+        DL_EllipseData *data=&(vec.DL_EllipseData_vector[i]);
         double c=sqrt(pow(data->mx,2)+pow(data->my,2));
         double k=data->ratio;
         double a=sqrt(pow(c,2)/(1-pow(k,2)));
@@ -459,7 +460,7 @@ line svg_gen::dxf_min_max_values(double &x_min, double &x_max, double &y_min, do
                 if(angle>0.001)
                 {
                     if(max<6.28&&min>0.001)
-                    alpha_array[i]=i*((2.0*M_PI-max+min)/((double)count_vertex))-angle;
+                    alpha_array[i]=i*((max-min)/((double)count_vertex))+min;
                     else alpha_array[i]=i*((2.0*M_PI)/((double)count_vertex))-angle;
                     double xr=a*cos(alpha_array[i]);
                     double yr=b*sin(alpha_array[i]);
@@ -484,52 +485,61 @@ line svg_gen::dxf_min_max_values(double &x_min, double &x_max, double &y_min, do
         }
     }
     ///обход сплайнов
-    size=(int) spline_points.size();
+    size=(int) vec.spline_points.size();
     int j=0;i=0;
     for(; i<size; ++i)
     {   j=0;
-        int size2=(int) spline_points[i].size();
+        int size2=(int) vec.spline_points[i].size();
         for(; j<size2;++j)
         {
-            double x=spline_points[i][j].x;
-            double y=spline_points[i][j].y;
+            double x=vec.spline_points[i][j].x;
+            double y=vec.spline_points[i][j].y;
             if(x<x_min) x_min=x;
             if(x>x_max) x_max=x;
             if(y<y_min) y_min=y;
             if(y>y_max) y_max=y;
         }
     }
-    printf("x_min=%f,x_max=%f,y_min=%f,y_max=%f\n",x_min,x_max,y_min,y_max);
-    line dxf_size;
+    range dxf_size;
     dxf_size.min_.x=x_min;
     dxf_size.max_.x=x_max;
     dxf_size.min_.y=y_min;
     dxf_size.max_.y=y_max;
+    dxf_range=dxf_size; ///копирование в класс
     return dxf_size;
 }
 
-void svg_gen::svg_generate(void)
+void svg_gen::min_max_values(data_vectors vec)
+{
+    double x_max=-10000, x_min=10000, y_max=-10000, y_min=10000;
+    min_max_values(vec, x_min,x_max,y_min,y_max);
+}
+
+void svg_gen::svg_generate(char *filename)
 {
     double x_min,x_max,y_min,y_max;
-    dxf_min_max_values(x_min,x_max,y_min,y_max);
+    min_max_values(common, x_min,x_max,y_min,y_max);
 
-    printf("sizeof=%d\n",sizeof(standard_header));
     char result[sizeof(standard_header)+64];
     sprintf(result,standard_header,x_max-x_min,y_max-y_min,x_max-x_min,y_max-y_min);
 
     this->resulting_svg.append(result);
     this->resulting_svg.append("<g fill=\"none\" stroke=\"black\" stroke-width=\"2.5\">");
-    generate_lines(x_min, y_max);
-    generate_arcs(x_min, y_max);
-    generate_circles(x_min, y_max);
-    generate_polyline(x_min, y_max);
-    generate_ellipse(x_min, y_max);
-    generate_spline(x_min,y_max);
+    generate_lines(common, x_min, y_max);
+    generate_arcs(common, x_min, y_max);
+    generate_circles(common, x_min, y_max);
+    generate_polyline(common, x_min, y_max);
+    generate_ellipse(common, x_min, y_max);
+    generate_spline(common, x_min,y_max);
     this->resulting_svg.append("</g>\n");
     this->resulting_svg.append("</svg>");
 
+    dxf_manipulate dxf(this);
+    dxf.rotate_dxf(this->common ,199);
+    dxf.dxf_write(nullptr);
+
     ofstream test_svg;
-    test_svg.open("test.svg");
+    test_svg.open(filename);
     test_svg<<this->resulting_svg;
     test_svg.close();
 }

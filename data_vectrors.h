@@ -21,19 +21,15 @@ class data_vectors
 {
     public:
     ~data_vectors();
-    bool is_block=false; ///нужно для того, чтобы создать std::map таблицу с типом и номером примитивов, входящих в блок
     int number_of_vertex_in_polyline=0;
     int number_of_vertex_in_spline=0;
     int number_of_knots_in_spline=0;
-    int spline_degree=0;
-    vector<vector<point>> polyline_matrix;
+    vector<vector<point>> polyline_points;
     vector<vector<point>> spline_points;
     vector<vector<double>> spline_knots;
-    vector<DL_SplineData> splines;
     vector<DL_LayerData> DL_LayerData_vector;
     vector<DL_LinetypeData> DL_LinetypeData_vector;
     //vector<double> LinetypeDash_vector;
-    vector<DL_BlockData> DL_BlockData_vector;
 
     vector<DL_StyleData> DL_StyleData_vector;
     //vector<DL_PointData> DL_PointData_vector;
@@ -45,10 +41,10 @@ class data_vectors
     vector<DL_CircleData> DL_CircleData_vector;
     vector<DL_EllipseData> DL_EllipseData_vector;
 
-    //vector<DL_PolylineData> DL_PolylineData_vector;
+    vector<DL_PolylineData> DL_PolylineData_vector;
     //vector<DL_VertexData> DL_VertexData_vector;
 
-    //vector<DL_SplineData> DL_SplineData_vector;
+    vector<DL_SplineData> DL_SplineData_vector;
     //vector<DL_ControlPointData> DL_ControlPointData_vector;
     //vector<DL_FitPointData> DL_FitPointData_vector;
     //vector<DL_KnotData> DL_KnotData_vector;
